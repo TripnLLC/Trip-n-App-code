@@ -1,5 +1,5 @@
 const admin = require('firebase-admin')
-const serviceAccount = require('./trip-n-44337-firebase-adminsdk-tuwpw-6b5509d71a.json')
+const serviceAccount = require('./tripn-f3722-firebase-adminsdk-c1n6j-ec1d39cc88.json')
 
 const adminInitApp = () => {
     let defaultApp

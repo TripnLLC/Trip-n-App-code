@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "1031397072412",
-    "project_id": "trip-n-44337",
-    "storage_bucket": "trip-n-44337.appspot.com"
+    "project_number": "124252853247",
+    "project_id": "tripn-f3722",
+    "storage_bucket": "tripn-f3722.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1031397072412:android:a145a7bd9c8b55df9b89d9",
+        "mobilesdk_app_id": "1:124252853247:android:c62e20079a0152b598cdca",
         "android_client_info": {
           "package_name": "com.tripn"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1031397072412-estthno5k5fbm43g4pooojq82ditvea5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.tripn",
-            "certificate_hash": "c25b59646766f145c31b23af4d242c5c5094e584"
-          }
-        },
-        {
-          "client_id": "1031397072412-vi1d3a7ltnmh19pl2i0pdc0h3sdvf49t.apps.googleusercontent.com",
+          "client_id": "124252853247-lq9irh8ooqmp0nhe3nc3ckvoscg2i4n9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAwOa9OsONAEsNcu8qnVaug2bbXDuQd4IA"
+          "current_key": "AIzaSyCZkZjY5z6j9Zf_wOQuu3Mvl3jiH-j9jf0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1031397072412-vi1d3a7ltnmh19pl2i0pdc0h3sdvf49t.apps.googleusercontent.com",
+              "client_id": "124252853247-lq9irh8ooqmp0nhe3nc3ckvoscg2i4n9.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

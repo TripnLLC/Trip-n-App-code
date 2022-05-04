@@ -21,6 +21,7 @@ function getGlobalSettings() {
       .collection('globalSettings')
       .get()
       .then((documentSnapshot) => {
+        console.log('get document of global setting123', documentSnapshot?.docs[0])
         if (documentSnapshot?.docs[0]) {
           resolve(documentSnapshot?.docs[0].data());
         }
@@ -37,7 +38,7 @@ export function* onTriggerGetGlobalSettingsSaga(action) {
     }
     yield put(triggerGetGlobalSettingsFailed('Global settings not found'));
   } catch (error) {
-    console.log(error);
+    console.log('get data of trigger', error);
     yield put(triggerGetGlobalSettingsFailed('Global settings not found'));
   }
 }
