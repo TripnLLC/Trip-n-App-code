@@ -19,6 +19,7 @@ function getFriends(uid) {
       .doc(uid)
       .get()
       .then((documentSnapshot) => {
+        console.log('get friends snapshot', documentSnapshot.data())
         resolve(documentSnapshot.data());
       });
   });

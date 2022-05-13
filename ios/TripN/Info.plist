@@ -39,6 +39,8 @@
 	<string>You can take photos to upload your profile picture.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>You can select photos for your profile picture.</string>
 	<key>UIAppFonts</key>

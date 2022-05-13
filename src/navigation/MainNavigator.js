@@ -12,6 +12,7 @@ import {
   ChatRoomSettingsScreen,
   StartALobbyScreen,
   ThirdPartyProfileScreen,
+  ChatRoomScreen
 } from '../screens';
 
 const Stack = createStackNavigator();
@@ -35,6 +36,7 @@ export const MainNavigator = () => {
       <Stack.Screen name="Searching" component={SearchingScreen} />
       <Stack.Screen name="StartALobby" component={StartALobbyScreen} />
       <Stack.Screen name="Room" component={RoomScreen} />
+      <Stack.Screen name="ChatRoom" component={ChatRoomScreen} />
 
       <Stack.Screen name="ThirdPartyProfile" component={ThirdPartyProfileScreen} />
     </Stack.Navigator>

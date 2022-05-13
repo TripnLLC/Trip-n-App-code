@@ -1,33 +1,28 @@
 import { useNavigation, useRoute } from '@react-navigation/core';
-import { StackActions } from '@react-navigation/routers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text, SafeAreaView, StatusBar, ScrollView, Image, BackHandler } from 'react-native';
+import { View, SafeAreaView, StatusBar, ScrollView, BackHandler, Text } from 'react-native';
 import {
   AppBar,
-  ToggleButton,
   BarButton,
-  LinkButton,
   Participant,
   ConfirmationMessage,
   Loader,
   showToast,
 } from '../../components';
-import LottieView from 'lottie-react-native';
 
 import styles from './styles';
 import { PRESET } from '../../constants';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { w } from '../../theme';
 import RtcEngine from 'react-native-agora';
 import { AgoraConfig } from '../../config/agora-config';
-import { join } from '@redux-saga/core/effects';
 import {
   triggerLeaveRoom,
   triggerResetRoom,
   triggerUpdateMicStatus,
 } from '../../redux/rooms/roomsSlice';
 import firestore from '@react-native-firebase/firestore';
+import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 
 const PROFILE_ICON = require('../../../assets/profile.png');
 
@@ -137,6 +132,7 @@ export const RoomScreen = () => {
       .onSnapshot((documentSnapshot) => {
         console.log('room data >>>>>>>>>>>>>>>>>>>++++', documentSnapshot?.data());
         setParticipants(getReOrderedParticipants(documentSnapshot?.data()?.participants));
+        
       });
 
     // Stop listening for updates when no longer required
@@ -227,6 +223,7 @@ export const RoomScreen = () => {
   return (
     <SafeAreaView style={styles().screen}>
       <StatusBar />
+      {/* <View style={{ flexDirection: 'row' }}> */}
       <AppBar
         title="Room Name"
         onPressLeftIcon={() => {
@@ -234,6 +231,7 @@ export const RoomScreen = () => {
           //navigation.popToTop();
         }}
       />
+      {/* </View> */}
       <View style={styles().scrollContainer}>
         <ScrollView contentContainerStyle={styles().scrollView} scrollEnabled={true}>
           <View style={styles(false, participants?.length * w(90)).container}>
@@ -268,6 +266,19 @@ export const RoomScreen = () => {
           />
           </View>*/}
       </View>
+      <BannerAd
+        unitId={TestIds.BANNER}
+        size={BannerAdSize.SMART_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+        onAdLoaded={() => {
+          console.log('Advert loaded');
+        }}
+        onAdFailedToLoad={(error) => {
+          console.error('Advert failed to load: ', error);
+        }}
+      />
       <ConfirmationMessage
         isVisible={isVisibleLeaveConfirmatinMessage}
         title="WARNING!"

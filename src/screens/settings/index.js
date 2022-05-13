@@ -26,9 +26,7 @@ export const SettingsScreen = () => {
     setEmail(profileUser?.email);
   }, [profileUser]);
 
-  console.log(isSignOutLoading, signOutSuccess, signOutError);
   useEffect(() => {
-    console.log(isSignOutLoading, signOutSuccess, signOutError);
     if (isSignOutLoading) return;
     if (signOutError) return showToast({ message: signOutError });
     console.log('is sign out success ', isSignOutLoading);

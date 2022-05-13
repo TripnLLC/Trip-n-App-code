@@ -2,6 +2,25 @@ import { StyleSheet } from 'react-native';
 import { colors, fonts, spacing, w } from '../../theme';
 
 export default styles = StyleSheet.create({
+  roomContainer: {
+    marginHorizontal: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.palette.white,
+    borderRadius: spacing.md,
+    alignItems: 'center',
+  },
+  roomTitle: {
+    fontSize: fonts.sizes.h4,
+    fontFamily: fonts.primary,
+    color: colors.palette.black,
+    bottom: spacing.xl + 10,
+    fontWeight: 'bold',
+  },
+  button: {
+    height: w(50),
+  },
   screen: {
     flex: 1,
     backgroundColor: colors.background,
@@ -57,5 +76,8 @@ export default styles = StyleSheet.create({
   startALobby: {
     marginBottom: w(32),
     width: '80%',
+  },
+  emailContainer: {
+    marginBottom: '5%',
   },
 });

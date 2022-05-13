@@ -46,6 +46,7 @@ export const SearchingScreen = () => {
   const [snapshotData, setSnapshotData] = useState(null);
 
   useEffect(() => {
+    console.log('get enter in room')
     // setTimeout(() => {
     //   navigation.navigate('Room');
     // }, 2000);
@@ -57,10 +58,13 @@ export const SearchingScreen = () => {
     if (isLoadingFindRoom) return;
     if (findRoomError) return showToast(findRoomError);
     if (room && roomId) {
+      console.log('findd room', room, roomId)
       // TODO: CREATE LISTENER
       setSelectedRoomId(roomId);
 
       if (room?.participants != null && room?.participants?.length == roomSize) {
+
+        // console.log('get participants of a roomm', room.participants)
         //navigation.navigate('Room')
         setRoomStatus('LIVE');
         updateChatRoomStatus();
@@ -69,10 +73,9 @@ export const SearchingScreen = () => {
   }, [isLoadingFindRoom]);
 
   useEffect(() => {
-    const subscriber = firestore()
-      .collection('rooms')
-      .doc(selectedRoomId)
+    const subscriber = firestore().collection('rooms').doc(selectedRoomId)
       .onSnapshot((documentSnapshot) => {
+        console.log('get collection of roomss', documentSnapshot)
         setSnapshotData(documentSnapshot);
       });
 
@@ -82,8 +85,11 @@ export const SearchingScreen = () => {
 
   useEffect(() => {
     if (snapshotData) {
+      console.log('get snapshot data', snapshotData)
       if (selectedRoomId) {
+        console.log('get selected rooom id', selectedRoomId)
         const { chatRoomStatus } = snapshotData?.data() ?? {};
+        console.log('get room statuss', chatRoomStatus)
         if (chatRoomStatus == 'LIVE' && snapshotData?.data()?.participants?.length == roomSize) {
           navigation.navigate('Room', { room: snapshotData?.data() });
         }

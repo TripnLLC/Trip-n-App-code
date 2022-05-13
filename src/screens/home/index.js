@@ -2,14 +2,13 @@ import { useNavigation } from '@react-navigation/core';
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, StatusBar } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { BarButton, AppBar, Avatar, Message, Loader, showToast } from '../../components';
+import { AppBar, Avatar, Loader, showToast, BarButton,Message } from '../../components';
 import { PRESET } from '../../constants';
 import {
   triggerGetGlobalSettings,
   triggerGetUserChatSettings,
 } from '../../redux/settings/settingsSlice';
 import { triggerGetFriends } from '../../redux/friends/friendsSlice';
-
 import styles from './styles';
 
 const FRIENDS_ICON = require('../../../assets/friends.png');
@@ -21,6 +20,8 @@ export const HomeScreen = () => {
   const navigation = useNavigation();
 
   const { user, profileUser } = useSelector((state) => state.general);
+  const [createRoom, setCreateRoom] = useState('');
+  const [fullNameError, setFullNameError] = useState(null);
   const { defaultChatRoomSettings, isLoadingGetUserChatSettings, getUserChatSettingsError } =
     useSelector((state) => state.settings);
 
@@ -128,6 +129,7 @@ export const HomeScreen = () => {
           title: 'STOP!',
           detail: 'Do not use while driving',
           onTap: onTapStartConfirmation,
+
         }}
       />
       <Loader isVisible={isLoadingGetUserChatSettings} />

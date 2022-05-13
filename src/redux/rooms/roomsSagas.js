@@ -31,6 +31,7 @@ function findRoom({ settings }) {
       .collection('rooms')
       .get()
       .then((documentSnapshot) => {
+        console.log('find room to get update', documentSnapshot.docs)
         resolve(documentSnapshot?.docs);
       });
   });
@@ -39,6 +40,7 @@ function findRoom({ settings }) {
 function createRoom({ settings, globalSettings }) {
   console.log('create room ***************', settings, globalSettings);
   return new Promise((resolve, reject) => {
+    console.log('get create room resolve', resolve)
     const room = {
       name:
         globalSettings?.chatRoomTypes?.filter((el) => el.id == settings?.selectedChatRoomType)[0]
@@ -63,13 +65,13 @@ function generateToken({ room, user }) {
   //http://172.20.10.5:5001
   return new Promise((resolve, reject) => {
     functions().useFunctionsEmulator('http://172.20.10.5:5001');
-      functions()
+    functions()
       .httpsCallable("createCallsWithTokens")({
         channelId: 'sldkfjlsklkf'
       }).then((response) => {
-          console.log('generate token ===================>', response);
-          resolve(true);
-        });
+        console.log('generate token ===================>', response);
+        resolve(true);
+      });
   });
 }
 
@@ -106,9 +108,9 @@ function getFilteredRoom({ rooms, settings, globalSettings }) {
       chatRoomSettings?.oneOnOneSelection == settings?.oneOnOneSelection &&
       chatRoomStatus == 'PENDING' &&
       participants?.length <
-        globalSettings?.preferredPoolSizes?.filter((innerEl) => {
-          return innerEl.id == settings?.selectedPreferredPoolSize;
-        })[0]?.value
+      globalSettings?.preferredPoolSizes?.filter((innerEl) => {
+        return innerEl.id == settings?.selectedPreferredPoolSize;
+      })[0]?.value
     );
   });
 }
@@ -150,7 +152,7 @@ export function* onTriggerFindRoomSaga(action) {
       room,
       user,
     });
-
+    console.log('add participent for create room', room, user)
     if (addParticipantResult) {
       yield put(
         triggerFindRoomSucceded({
