@@ -22,7 +22,7 @@ import {
   triggerUpdateMicStatus,
 } from '../../redux/rooms/roomsSlice';
 import firestore from '@react-native-firebase/firestore';
-import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+// import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 
 const PROFILE_ICON = require('../../../assets/profile.png');
 
@@ -132,7 +132,6 @@ export const RoomScreen = () => {
       .onSnapshot((documentSnapshot) => {
         console.log('room data >>>>>>>>>>>>>>>>>>>++++', documentSnapshot?.data());
         setParticipants(getReOrderedParticipants(documentSnapshot?.data()?.participants));
-        
       });
 
     // Stop listening for updates when no longer required
@@ -239,7 +238,6 @@ export const RoomScreen = () => {
           </View>
         </ScrollView>
       </View>
-
       <View style={styles().bottomContainer}>
         <View style={styles().leaveRoomContainer}>
           <BarButton
@@ -266,7 +264,7 @@ export const RoomScreen = () => {
           />
           </View>*/}
       </View>
-      <BannerAd
+      {/* <BannerAd
         unitId={TestIds.BANNER}
         size={BannerAdSize.SMART_BANNER}
         requestOptions={{
@@ -278,7 +276,7 @@ export const RoomScreen = () => {
         onAdFailedToLoad={(error) => {
           console.error('Advert failed to load: ', error);
         }}
-      />
+        /> */}
       <ConfirmationMessage
         isVisible={isVisibleLeaveConfirmatinMessage}
         title="WARNING!"
