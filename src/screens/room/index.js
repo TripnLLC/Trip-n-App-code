@@ -14,7 +14,7 @@ import {
 import styles from './styles';
 import { PRESET } from '../../constants';
 import { w } from '../../theme';
-import RtcEngine from 'react-native-agora';
+import { createAgoraRtcEngine } from 'react-native-agora';
 import { AgoraConfig } from '../../config/agora-config';
 import {
   triggerLeaveRoom,
@@ -54,7 +54,9 @@ export const RoomScreen = () => {
   const [isVisibleLoader, setIsVisibleLoader] = useState(false);
 
   const initAgora = async () => {
-    const _engine = await RtcEngine.create(AgoraConfig.appId);
+    const _engine = createAgoraRtcEngine();
+    _engine.initialize({ appId: AgoraConfig.appId });
+
     setEngine(_engine);
     await _engine.enableAudio();
 
