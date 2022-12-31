@@ -1,4 +1,5 @@
 export const AgoraConfig = {
-  appId: 'a7dbe5e4d7574145b90146011fca9599',
-  token: 'fa3be476a26a4a5893837112d39ac4c5',
+  appId: '2ebeb0d537a04effa1266091710a633d',
+  token:
+    '007eJxTYLAJtvvo/9jk77P/JiIzWRSsV+5Yfevl2yPHw5++OiX1aHWPAoNRalJqkkGKqbF5ooFJalpaoqGRmZmBpaG5oUGimbFxSkXchuSGQEaGCRf2sDAyQCCIz82QnJGYl5ea45eYm8rAAABIcCWz',
 };
