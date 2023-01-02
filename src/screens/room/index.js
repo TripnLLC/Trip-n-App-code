@@ -1,7 +1,16 @@
 import { useNavigation, useRoute } from '@react-navigation/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, SafeAreaView, StatusBar, ScrollView, BackHandler, Text } from 'react-native';
+import {
+  View,
+  SafeAreaView,
+  StatusBar,
+  ScrollView,
+  BackHandler,
+  // eslint-disable-next-line react-native/split-platform-components
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
 import {
   AppBar,
   BarButton,
@@ -14,7 +23,7 @@ import {
 import styles from './styles';
 import { PRESET } from '../../constants';
 import { w } from '../../theme';
-import RtcEngine from 'react-native-agora';
+import { createAgoraRtcEngine, ChannelProfileType, ClientRoleType } from 'react-native-agora';
 import { AgoraConfig } from '../../config/agora-config';
 import {
   triggerLeaveRoom,
@@ -22,7 +31,7 @@ import {
   triggerUpdateMicStatus,
 } from '../../redux/rooms/roomsSlice';
 import firestore from '@react-native-firebase/firestore';
-import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+// import { TestIds, BannerAd, BannerAdSize } from '@react-native-firebase/admob';
 
 const PROFILE_ICON = require('../../../assets/profile.png');
 
@@ -31,6 +40,7 @@ export const RoomScreen = () => {
   const dispatch = useDispatch();
 
   const route = useRoute();
+  const agoraEngineRef = useRef();
 
   const { poolSizes, defaultChatRoomSettings } = useSelector((state) => state.settings);
   const { profileUser } = useSelector((state) => state.general);
@@ -53,44 +63,66 @@ export const RoomScreen = () => {
   const [isVisibleLeaveConfirmatinMessage, setIsVisibleLeaveConfirmationMessage] = useState(false);
   const [isVisibleLoader, setIsVisibleLoader] = useState(false);
 
-  const initAgora = async () => {
-    const _engine = await RtcEngine.create(AgoraConfig.appId);
-    setEngine(_engine);
-    await _engine.enableAudio();
-
-    // Listen for the UserJoined callback.
-    // This callback occurs when the remote user successfully joins the channel.
-    _engine.addListener('UserJoined', (uid, elapsed) => {
-      console.log('UserJoined', uid, elapsed);
-      if (peerIds.indexOf(uid) === -1) {
-        setPeerIds([...peerIds, uid]);
-      }
-    });
-
-    // Listen for the UserOffline callback.
-    // This callback occurs when the remote user leaves the channel or drops offline.
-    _engine.addListener('UserOffline', (uid, reason) => {
-      console.log('UserOffline', uid, reason);
-      setPeerIds(peerIds.filter((id) => id !== uid));
-    });
-
-    // Listen for the JoinChannelSuccess callback.
-    // This callback occurs when the local user successfully joins the channel.
-    _engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
-      console.log('JoinChannelSuccess', channel, uid, elapsed);
-      setJoinSucceed(true);
-    });
-
-    await joinChannel(_engine);
+  const getPermission = async () => {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
+    }
   };
 
-  const joinChannel = async (_engine) => {
-    await _engine?.joinChannel(
-      '006a7dbe5e4d7574145b90146011fca9599IADBY4OxEzY4lUYCazl6WEzAZzZ/54PbhmzcFq5ulLN3l1Q8SVUAAAAAEAAUEHcdTDWyYQEAAQBMNbJh',
-      'test-audio',
-      null,
-      0
-    );
+  const setupEngine = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        await getPermission();
+      }
+      agoraEngineRef.current = createAgoraRtcEngine();
+      const agoraEngine = agoraEngineRef.current;
+      agoraEngine.registerEventHandler({
+        onJoinChannelSuccess: () => {
+          console.log('Successfully joined the channel ' + 'channelName');
+          setJoinSucceed(true);
+        },
+        onUserJoined: (_connection, Uid) => {
+          console.log('Remote user joined with uid ' + Uid);
+          setPeerIds([...peerIds, Uid]);
+        },
+        onUserOffline: (_connection, Uid) => {
+          console.log('Remote user left the channel. uid: ' + Uid);
+          setPeerIds(peerIds.filter((id) => id !== Uid));
+        },
+      });
+      await agoraEngine.initialize({
+        appId: AgoraConfig.appId,
+        channelProfile: ChannelProfileType.ChannelProfileLiveBroadcasting,
+      });
+      await agoraEngine.enableAudio();
+      setTimeout(() => {
+        join();
+      }, 1000);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const join = async () => {
+    try {
+      agoraEngineRef.current?.setChannelProfile(ChannelProfileType.ChannelProfileCommunication);
+      agoraEngineRef.current?.startPreview();
+      agoraEngineRef.current?.joinChannel(AgoraConfig.token, 'channelName', 0, {
+        clientRoleType: ClientRoleType.ClientRoleBroadcaster,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const leaveChannel = () => {
+    try {
+      agoraEngineRef.current?.leaveChannel();
+      setJoinSucceed(false);
+      setPeerIds([]);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const onTapSpeakerChange = (data, status) => {
@@ -105,7 +137,7 @@ export const RoomScreen = () => {
   };
 
   useEffect(() => {
-    initAgora();
+    setupEngine();
     setParticipants(getReOrderedParticipants(room?.participants) ?? []);
     // const selectedPool = poolSizes.find(
     //   (x) => x.id === defaultChatRoomSettings.selectedPreferredPoolSize
@@ -132,7 +164,6 @@ export const RoomScreen = () => {
       .onSnapshot((documentSnapshot) => {
         console.log('room data >>>>>>>>>>>>>>>>>>>++++', documentSnapshot?.data());
         setParticipants(getReOrderedParticipants(documentSnapshot?.data()?.participants));
-        
       });
 
     // Stop listening for updates when no longer required
@@ -187,15 +218,9 @@ export const RoomScreen = () => {
     return generatedList;
   };
 
-  const leaveChannel = async () => {
-    await engine?.leaveChannel();
-    setPeerIds([]);
-    setJoinSucceed(false);
-  };
-
   const requestToLeaveChatRoom = async () => {
     setIsVisibleLoader(true);
-    await leaveChannel();
+    leaveChannel();
     setIsVisibleLoader(false);
     dispatch(triggerLeaveRoom({ roomId, uid: profileUser?.id }));
   };
@@ -239,7 +264,6 @@ export const RoomScreen = () => {
           </View>
         </ScrollView>
       </View>
-
       <View style={styles().bottomContainer}>
         <View style={styles().leaveRoomContainer}>
           <BarButton
@@ -266,7 +290,7 @@ export const RoomScreen = () => {
           />
           </View>*/}
       </View>
-      <BannerAd
+      {/* <BannerAd
         unitId={TestIds.BANNER}
         size={BannerAdSize.SMART_BANNER}
         requestOptions={{
@@ -278,7 +302,7 @@ export const RoomScreen = () => {
         onAdFailedToLoad={(error) => {
           console.error('Advert failed to load: ', error);
         }}
-      />
+        /> */}
       <ConfirmationMessage
         isVisible={isVisibleLeaveConfirmatinMessage}
         title="WARNING!"
